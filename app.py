@@ -1,5 +1,4 @@
 from __future__ import print_function
-from flask import Flask, request, jsonifypip freeze > requirements.txt
 import datetime
 import pickle
 import os.path
@@ -11,8 +10,6 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 app = Flask(__name__)
 
-@app.route('/calendar', methods=["GET", "POST"])
-def calendar():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
