@@ -37,24 +37,24 @@ def main():
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
-    service = build('calendar', 'v3', credentials=creds)
-    event={'summary':content['summary'],
-    'location':content['location'],
-    'start':{
-        'dateTime': content['stime'],
-        'timeZone': 'Asia/Kolkata',
-    },
-      'end': {
-          'dateTime': content['etime'],
-          'timeZone': 'Asia/Kolkata',
-  },
-    'attendees': [
-    {'email': content['firstemail']},
-    {'email': content['secondemail']},
-    {'email': content['thirdemail']}
-  ],}
-    event = service.events().insert(calendarId='primary', body=event).execute()
-    print ('Event created: %s' % (event.get('htmlLink')))
+#     service = build('calendar', 'v3', credentials=creds)
+#     event={'summary':content['summary'],
+#     'location':content['location'],
+#     'start':{
+#         'dateTime': content['stime'],
+#         'timeZone': 'Asia/Kolkata',
+#     },
+#       'end': {
+#           'dateTime': content['etime'],
+#           'timeZone': 'Asia/Kolkata',
+#   },
+#     'attendees': [
+#     {'email': content['firstemail']},
+#     {'email': content['secondemail']},
+#     {'email': content['thirdemail']}
+#   ],}
+#     event = service.events().insert(calendarId='primary', body=event).execute()
+#     print ('Event created: %s' % (event.get('htmlLink')))
 
 
 
