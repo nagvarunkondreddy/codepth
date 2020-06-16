@@ -19,7 +19,7 @@ CORS(app)
 def main(): 
 
     creds = None
-    content = json.loads(request.data)
+    # content = json.loads(request.data)
     # The file token.pickle stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
