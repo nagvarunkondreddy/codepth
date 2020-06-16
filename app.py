@@ -13,10 +13,9 @@ from google.auth.transport.requests import Request
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 app = Flask(__name__)
+CORS(app)
 
-cors = CORS(app, resources={r'/*': {'origins': '*'}})
-
-@app.route('/', methods=["GET", "POST"])
+@app.route('/event', methods=["GET", "POST"])
 def main(): 
 
     creds = None
@@ -33,7 +32,7 @@ def main():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-            creds = flow.run_console()
+            creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
