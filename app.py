@@ -1,7 +1,10 @@
 from __future__ import print_function
 import datetime
+from flask import Flask, request, jsonify
 import pickle
+from flask_cors import CORS
 import os.path
+import json
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -9,15 +12,16 @@ from google.auth.transport.requests import Request
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
-
+app = Flask(__name__)
+CORS(app)
+cors = CORS(app, resources={r'/*': {'origins': '*'}})
+@app.route('/event', methods=["GET", "POST"])
 def main():
     """Shows basic usage of the Google Calendar API.
     Prints the start and name of the next 10 events on the user's calendar.
     """
     creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
+    content = json.loads(request.data)
     if os.path.exists('token.pickle'):
         with open('token.pickle', 'rb') as token:
             creds = pickle.load(token)
@@ -27,32 +31,42 @@ def main():
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=5000)
+                'credentials.json', SCOPES,redirect_uri="localhost:4200/home")
+            creds = flow.run_local_server(port=1000)
         # Save the credentials for the next run
         with open('token.pickle', 'wb') as token:
             pickle.dump(creds, token)
 
     service = build('calendar', 'v3', credentials=creds)
-    event = {
-            'summary': 'Google I/O 2015',
-            'location': '800 Howard St., San Francisco, CA 94103',
-            'description': 'A chance to hear more about Google\'s developer products.',
+    if(service):
+
+            event = {
+            'summary': content['summary'],
+            'location': content['location'],
             'start': {
-                'dateTime': '2015-05-28T09:00:00-07:00',
-                'timeZone': 'America/Los_Angeles',
+                'dateTime': content['stime']+":00",
+                'timeZone': 'Asia/Kolkata',
                 },
             'end': {
-                'dateTime': '2015-05-28T17:00:00-07:00',
-                'timeZone': 'America/Los_Angeles',
-                }
+                'dateTime': content['etime'] + ":00",
+                'timeZone': 'Asia/Kolkata',
+                },
+            'attendees': [
+                {'email':content['firstemail']},
+                {'email': content['secondemail']},
+                {'email': content['thirdemail']}
+                  ]
         }
-    event = service.events().insert(calendarId='primary', body=event).execute()
-    print ('Event created: %s' % (event.get('htmlLink')))
+            event = service.events().insert(calendarId='primary', body=event).execute()
+            print ('Event created: %s' % (event.get('htmlLink')))
+            return ("Event created")
 
-    # Call the Calendar API
+
+    else:
+        return("Event not created pls try after some time")
+
 
 
 
 if __name__ == '__main__':
-    main()
+    app.run(threaded=True, debug=True)
